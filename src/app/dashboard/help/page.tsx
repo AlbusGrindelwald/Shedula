@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -19,33 +18,24 @@ import {
 } from '@/components/ui/tabs';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { getFaqAnswer } from '@/ai/flows/faq-flow';
 
-const faqQuestions = [
-  'What is Shedula?',
-  'How do I cancel an appointment?',
-  'Why can I not book an appointment?',
-  'Why are there no appointment slots available?',
-];
+const faqAnswers: Record<string, string> = {
+  'What is Shedula?':
+    'Shedula is a mobile app that helps you find doctors and book appointments easily. You can search for doctors, view their profiles, and see when they’re available. We even have an AI feature that recommends doctors based on your symptoms!',
+  'How do I cancel an appointment?':
+    "To cancel your appointment, go to the 'Appointments' section in the app, select the appointment you wish to cancel, and tap the 'Cancel' button. Please note that appointments can be rescheduled up to one hour before the scheduled time. If it’s less than an hour, you can only cancel.",
+  'Why can I not book an appointment?':
+    "There are a couple of reasons why you might not be able to book an appointment. Either the doctor is fully booked for that day, or they haven’t published their schedule yet. Please try another day or doctor.",
+  'Why are there no appointment slots available?':
+    "It means that the doctor is either fully booked for that day or hasn’t published their schedule yet. Please check again later or try a different doctor.",
+};
+
+const faqQuestions = Object.keys(faqAnswers);
 
 function FaqItem({ question }: { question: string }) {
-  const [answer, setAnswer] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleToggle = async () => {
-    if (!isOpen && !answer) {
-      setIsLoading(true);
-      try {
-        const result = await getFaqAnswer({ question });
-        setAnswer(result.answer);
-      } catch (error) {
-        console.error('Failed to get FAQ answer:', error);
-        setAnswer('Sorry, I could not find an answer to that question.');
-      } finally {
-        setIsLoading(false);
-      }
-    }
+  const handleToggle = () => {
     setIsOpen(!isOpen);
   };
 
@@ -55,18 +45,10 @@ function FaqItem({ question }: { question: string }) {
         <span className="flex-1 text-left">{question}</span>
       </AccordionTrigger>
       <AccordionContent>
-        {isLoading ? (
-          <div className="space-y-2">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
-            <Skeleton className="h-4 w-3/4" />
-          </div>
-        ) : (
-          <div className="flex gap-4">
-             <Bot className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
-            <p className="text-muted-foreground">{answer}</p>
-          </div>
-        )}
+        <div className="flex gap-4">
+          <Bot className="h-5 w-5 text-primary flex-shrink-0 mt-1" />
+          <p className="text-muted-foreground">{faqAnswers[question]}</p>
+        </div>
       </AccordionContent>
     </AccordionItem>
   );
@@ -121,7 +103,7 @@ export default function HelpAndSupportPage() {
               </Card>
               <Card>
                 <CardContent className="p-4 flex items-center gap-4">
-                   <div className="p-3 bg-primary/10 rounded-full">
+                  <div className="p-3 bg-primary/10 rounded-full">
                     <Mail className="h-6 w-6 text-primary" />
                   </div>
                   <div>
@@ -137,7 +119,7 @@ export default function HelpAndSupportPage() {
               </Card>
               <Card>
                 <CardContent className="p-4 flex items-center gap-4">
-                   <div className="p-3 bg-primary/10 rounded-full">
+                  <div className="p-3 bg-primary/10 rounded-full">
                     <MapPin className="h-6 w-6 text-primary" />
                   </div>
                   <div>
